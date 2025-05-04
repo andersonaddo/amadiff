@@ -9,6 +9,10 @@
     "./**/*.tsx"
   ],
   "compilerOptions": {
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "strictNullChecks": true,
     "paths": {
       "core/*": [
         "./src/core/*"

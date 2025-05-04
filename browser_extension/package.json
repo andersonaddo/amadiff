@@ -9,12 +9,17 @@
     "deploy": "sh ./scripts/zip_chrome.sh"
   },
   "manifest": {
-    "permissions": ["scripting"],
+    "permissions": [
+      "scripting"
+    ],
     "host_permissions": [
       "https://*.github.com/*"
     ]
   },
   "dependencies": {
+    "@plasmohq/storage": "^1.15.0",
+    "axios": "^1.9.0",
+    "axios-cache-interceptor": "^1.8.0",
     "plasmo": "0.89.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
