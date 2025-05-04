@@ -2,16 +2,16 @@ This is a [Plasmo extension](https://docs.plasmo.com/) project.
 
 To setup:
 
-`npm install`
+`yarn install`
 
 To run locally:
 
-`npm run start`
+`yarn run start`
 
 To make a production build (unpackaged):
 
-`npm run build`
+`yarn run build`
 
 To make a production build (packaged):
 
-`npm run deploy`
+`yarn run deploy`
