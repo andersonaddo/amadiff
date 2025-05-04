@@ -1,0 +1,1 @@
+Core logic should go here, since files being in folders like `/contents` may be interpreted by Plasmo as content files or whatever

@@ -1,0 +1,28 @@
+// TODO: There are mulitple copies of this file: one in the workspace root others in the sub-workspaces
+// When the vscode Biome extension reaches v3 (which is in alpha as of August 2024),
+// I should be able remove the one in the project root
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "formatter": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "ignore": [
+      "**/*.js",
+      "**/settings.json"
+    ],
+    "rules": {
+      "recommended": false, //TODO: make this true and audit later on
+      "style": {
+        "useImportType": {
+          "fix": "safe",
+          "level": "error"
+        }
+      }
+    }
+  },
+  "organizeImports": {
+    "enabled": false
+  }
+}

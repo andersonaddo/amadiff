@@ -1,0 +1,33 @@
+{
+    "folders": [
+        {
+            "path": ".",
+            "name": "root"
+        },
+        {
+            "name": "firebase",
+            "path": "firebase_server"
+        },
+        {
+            "name": "extension",
+            "path": "browser_extension"
+        },
+    ],
+    "extensions": {
+        "recommendations": [
+            //*************GENERAL****************
+            "gruntfuggly.todo-tree",
+            "visualstudioexptteam.vscodeintellicode",
+            "github.vscode-github-actions",
+            "esbenp.prettier-vscode",
+            //*************CLIENT AND BROWSER EXTENSION****************
+            "bradlc.vscode-tailwindcss",
+            "wix.vscode-import-cost",
+            "biomejs.biome",
+        ]
+    },
+    "settings": {
+        "cSpell.words": [],
+        "git.openRepositoryInParentFolders": "always",
+    }
+}
