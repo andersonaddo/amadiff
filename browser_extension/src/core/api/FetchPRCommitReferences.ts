@@ -1,34 +1,25 @@
 import axios from "axios";
-import { setupCache } from "axios-cache-interceptor";
 import { getGithubToken } from "core/storage";
+import type { PRCommitInfo } from "../types/getBetterDiffTypes";
 
-interface Repo {
+interface GraphQLRepo {
   name: string;
   owner: {
     login: string;
   };
 }
 
-interface GraphQLResponse {
+interface GraphQLQueryResponse {
   data: {
     repository: {
       pullRequest: {
         headRefOid: string;
         baseRefOid: string;
-        headRepository: Repo;
-        baseRepository: Repo;
+        headRepository: GraphQLRepo;
+        baseRepository: GraphQLRepo;
       };
     };
   };
-}
-
-export interface PRCommitInfo {
-  headRepoName: string;
-  headRepoOwner: string;
-  headHash: string;
-  baseRepoName: string;
-  baseRepoOwner: string;
-  baseHash: string;
 }
 
 const makeGraphQLQuery = (owner: string, repo: string, prNumber: number) => `{
@@ -52,16 +43,10 @@ const makeGraphQLQuery = (owner: string, repo: string, prNumber: number) => `{
   }
 }`;
 
-// TODO: this should be true and might result in some problems
-// TODO: actually - this whole caching thing isn't working
-const axiosInstance = setupCache(
-  axios.create({
-    baseURL: "https://api.github.com/graphql",
-  }),
-  {
-    cacheTakeover: false,
-  },
-);
+// TODO: Implement caching here (the cache should just store promises with ttl)
+const axiosInstance = axios.create({
+  baseURL: "https://api.github.com/graphql",
+});
 
 export const getPRCommitReferences = async (
   owner: string,
@@ -83,7 +68,7 @@ export const getPRCommitReferences = async (
     },
   );
 
-  const data = response.data as GraphQLResponse;
+  const data = response.data as GraphQLQueryResponse;
 
   return {
     headRepoName: data.data.repository.pullRequest.headRepository.name,

@@ -14,11 +14,11 @@
     "noFallthroughCasesInSwitch": true,
     "strictNullChecks": true,
     "paths": {
+      "src/*": [
+        "./src/*"
+      ],
       "core/*": [
         "./src/core/*"
-      ],
-      "src": [
-        "./src/*"
       ],
     },
     "baseUrl": "."

@@ -27,7 +27,10 @@
         ]
     },
     "settings": {
-        "cSpell.words": [],
+        "cSpell.words": [
+            "difftastic",
+            "Displayer"
+        ],
         "git.openRepositoryInParentFolders": "always",
     }
 }

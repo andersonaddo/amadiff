@@ -1,17 +1,20 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "esModuleInterop": true,
+    "target": "es2017",
+    "module": "nodenext",
     "moduleResolution": "nodenext",
+    "esModuleInterop": true,
     "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
   },
   "compileOnSave": true,
   "include": [
     "src"
-  ]
+  ],
 }
