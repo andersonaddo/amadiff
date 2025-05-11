@@ -1,18 +1,28 @@
-// These should all match the backend
+// The frontend and backend versions of this should match
 export interface DiffRequestArgs {
   token: string;
   commitInfo: PRCommitInfo;
   fileName: string;
-  diffMethod: DiffMethods;
+  diffOptions: DiffOptions;
 }
 
 export interface DiffRequestResponse {
-  status: "missing-or-invalid" | "error" | "success";
+  status: "invalid-format" | "error" | "success";
   diff?: string;
 }
 
-export enum DiffMethods {
+export interface DiffOptions {
+  method: DiffMethod;
+  colorMode?: "light" | "dark";
+}
+
+export enum DiffMethod {
   DIFFTASTIC = "difftastic",
+}
+
+export interface DiffMethodsColorMode {
+  status: "invalid-format" | "error" | "success";
+  diff?: string;
 }
 
 export interface PRCommitInfo {

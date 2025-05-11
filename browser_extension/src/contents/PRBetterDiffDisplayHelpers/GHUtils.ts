@@ -17,3 +17,9 @@ export const extractPRInfoFromURL = () => {
     prNumber: Number.parseInt(pathParts[4], 10),
   };
 };
+
+export const useGithubColorTheme = () => {
+  if (window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
+  if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+  return null;
+};

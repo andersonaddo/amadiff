@@ -1,12 +1,17 @@
 import { Octokit } from "@octokit/rest";
 
+export interface FileFetchResult {
+  textContent?: string;
+  status: "missing" | "bad-format" | "success";
+}
+
 export async function fetchTextFileContent(
   authToken: string,
   owner: string,
   repo: string,
   ref: string,
   path: string
-): Promise<string | null> {
+): Promise<FileFetchResult> {
   const octokit = new Octokit({
     auth: authToken,
   });
@@ -27,17 +32,24 @@ export async function fetchTextFileContent(
 
     const data = response.data;
     if (!("content" in data)) {
-      return null;
+      return {
+        status: "bad-format",
+      };
     }
 
-    // GitHub API returns content as Base64 encoded
-    return Buffer.from(data.content, "base64").toString("utf8");
+    return {
+      // GitHub API returns content as Base64 encoded
+      textContent: Buffer.from(data.content, "base64").toString("utf8"),
+      status: "success",
+    };
 
     // biome-ignore lint/suspicious/noExplicitAny: error handling
   } catch (error: any) {
     //https://github.com/octokit/request-error.js
     if (error.status && error.status === 404) {
-      return null;
+      return {
+        status: "missing",
+      };
     }
     throw error;
   }

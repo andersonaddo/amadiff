@@ -10,11 +10,8 @@ import type {
   DiffRequestResponse,
 } from "./types/getBetterDiffTypes";
 
-const appendFileExtension = (path: string, extension?: string) => {
-  if (extension) {
-    return `${path}.${extension}`;
-  }
-  return path;
+const cleanFilePath = (path: string) => {
+  return path.replace(/[\,\/]/gi, "-");
 };
 
 export const getBetterDiff = onCall(
@@ -38,26 +35,43 @@ export const getBetterDiff = onCall(
       ),
     ]);
 
-    if (!baseFileContent || !headFileContent) {
+    if (
+      baseFileContent.status === "bad-format" ||
+      headFileContent.status === "bad-format"
+    ) {
       return {
-        status: "missing-or-invalid",
+        status: "invalid-format",
+      };
+    }
+
+    if (
+      baseFileContent.status === "missing" &&
+      headFileContent.status === "missing"
+    ) {
+      return {
+        status: "invalid-format",
       };
     }
 
     const tmp = os.tmpdir();
-    const fileExtension = request.fileName.split(".").pop();
-    const baseFilePath = appendFileExtension(
-      path.join(tmp, `base_${Date.now()}`),
-      fileExtension
+    const filePath = request.fileName;
+    const baseFilePath = path.join(
+      tmp,
+      `base_${Date.now()}_${cleanFilePath(filePath)}`
     );
-    const headFilePath = appendFileExtension(
-      path.join(tmp, `head_${Date.now()}`),
-      fileExtension
+    const headFilePath = path.join(
+      tmp,
+      `head_${Date.now()}_${cleanFilePath(filePath)}`
     );
 
-    fs.writeFileSync(baseFilePath, baseFileContent);
-    fs.writeFileSync(headFilePath, headFileContent);
-    const htmlOutput = await getPrettyDiffHTML(baseFilePath, headFilePath);
+    // This should work fine for both a DiffRequestResponse status of "missing" and "success"
+    fs.writeFileSync(baseFilePath, baseFileContent.textContent ?? "");
+    fs.writeFileSync(headFilePath, headFileContent.textContent ?? "");
+    const htmlOutput = await getPrettyDiffHTML(
+      request.diffOptions,
+      baseFilePath,
+      headFilePath
+    );
     fs.unlinkSync(baseFilePath);
     fs.unlinkSync(headFilePath);
 

@@ -5,13 +5,21 @@ import type {
   PlasmoCSUIProps,
   PlasmoGetInlineAnchorList,
   PlasmoGetShadowHostId,
+  PlasmoGetStyle,
 } from "plasmo";
-import { useEffect, useState, type FC } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 import { createPortal } from "react-dom";
 import { extractPRInfoFromURL } from "src/contents/PRBetterDiffDisplayHelpers/GHUtils";
 import { useToggleState } from "src/core/hooks";
 import { DiffDisplayer } from "./PRBetterDiffDisplayHelpers/DiffDisplayer";
 import type { PRCommitInfo } from "src/core/types/getBetterDiffTypes";
+import styleText from "data-text:./styles.scss"; // https://docs.plasmo.com/framework/content-scripts-ui/styling
+
+export const getStyle: PlasmoGetStyle = () => {
+  const style = document.createElement("style");
+  style.textContent = styleText;
+  return style;
+};
 
 // Context on what's going on here:
 // https://docs.plasmo.com/framework/content-scripts-ui/life-cycle
@@ -37,10 +45,16 @@ const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
   const [isBetterDisplayVisible, toggleBetterDisplayVisibility] = useToggleState(true);
 
   const fileName = anchor?.element.getAttribute("data-file-path");
-
   const defaultDiffDisplayElement: Optional<HTMLTableElement> =
     anchor?.element.querySelector("table.diff-table");
-  const defaultDiffDisplayElementParent = defaultDiffDisplayElement?.parentElement;
+
+  const portalAnchor = useMemo(() => {
+    const defaultDiffDisplayElementParent = defaultDiffDisplayElement?.parentElement;
+    if (!defaultDiffDisplayElementParent) return null;
+    const firstSibling = document.createElement("div");
+    defaultDiffDisplayElementParent?.prepend(firstSibling);
+    return firstSibling;
+  }, [defaultDiffDisplayElement]);
 
   useEffect(() => {
     const getDiffReferences = async () => {
@@ -52,36 +66,22 @@ const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
     getDiffReferences();
   }, []);
 
-  useEffect(() => {
-    if (!defaultDiffDisplayElement) return;
-    if (isBetterDisplayVisible) {
-      defaultDiffDisplayElement.style.display = "none";
-    } else {
-      defaultDiffDisplayElement.style.display = "unset";
-    }
-  }, [isBetterDisplayVisible, defaultDiffDisplayElement]);
-
   return (
-    <div
-      style={{
-        borderRadius: 4,
-        padding: 4,
-        background: "pink",
-      }}
-    >
+    <div>
       <button type="button" onClick={toggleBetterDisplayVisibility}>
         Toggle visibility!
       </button>
 
-      {defaultDiffDisplayElementParent && (
+      {portalAnchor && defaultDiffDisplayElement && (
         <>
           {createPortal(
             <DiffDisplayer
               commitReferences={commitInfo}
               fileName={fileName}
-              shouldShow={isBetterDisplayVisible}
+              enabled={isBetterDisplayVisible}
+              defaultDiffElement={defaultDiffDisplayElement}
             />,
-            defaultDiffDisplayElementParent,
+            portalAnchor,
           )}
         </>
       )}

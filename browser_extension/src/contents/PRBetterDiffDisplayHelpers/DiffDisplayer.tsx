@@ -1,68 +1,90 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CloudFunctions } from "src/core/api/cloudFunctions";
 import { useGithubToken } from "src/core/storage";
 import {
-  DiffMethods,
+  DiffMethod,
   type DiffRequestResponse,
   type PRCommitInfo,
 } from "src/core/types/getBetterDiffTypes";
 import type { Nullable } from "src/core/types/types";
 import { assertDefined } from "src/core/util";
+import { generateDiffMessages } from "./DiffAnalysis";
+import { useGithubColorTheme } from "./GHUtils";
+import LoadingEmoticon from "./LoadingAnimation";
+
+const diffMethod = DiffMethod.DIFFTASTIC;
 
 export const DiffDisplayer = (props: {
   commitReferences?: Nullable<PRCommitInfo>;
   fileName?: Nullable<string>;
-  shouldShow: boolean;
+  enabled: boolean;
+  defaultDiffElement: HTMLTableElement;
 }) => {
-  const { commitReferences, fileName, shouldShow } = props;
+  const { commitReferences, fileName, enabled, defaultDiffElement } = props;
+
+  const [receivedDiff, setReceivedDiff] = useState<Nullable<DiffRequestResponse>>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(enabled); // If `enabled` was initially true, then we should fetch immediately
   const [token] = useGithubToken();
-  const [diffString, setDiffString] = useState<string>("");
-  const [status, setStatus] = useState<Nullable<DiffRequestResponse["status"]>>(null);
+  const colorTheme = useGithubColorTheme();
+
+  const diffMessages = useMemo(() => {
+    return generateDiffMessages(diffMethod, receivedDiff);
+  }, [receivedDiff]);
+
+  const betterDiffBlocked = useMemo(() => {
+    return isLoading || diffMessages.some((x) => x.magnitude === "major") || !receivedDiff?.diff;
+  }, [diffMessages, isLoading, receivedDiff]);
 
   useEffect(() => {
     if (!commitReferences || !fileName || !token) return;
+    setIsLoading(true);
     CloudFunctions.ApiGetBetterDiff({
       commitInfo: commitReferences,
       fileName,
-      diffMethod: DiffMethods.DIFFTASTIC,
       token,
-    }).then((response) => {
-      // TODO: finish this
-      const cleanedDiff = response.diff;
+      diffOptions: { method: diffMethod, colorMode: colorTheme ?? undefined },
+    })
+      .then((response) => {
+        // DOMPurify.sanitize(response.diff as string, {
+        //   USE_PROFILES: { html: true },
+        // });
+        setReceivedDiff(response);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [commitReferences, fileName, token, colorTheme]);
 
-      // DOMPurify.sanitize(response.diff as string, {
-      //   USE_PROFILES: { html: true },
-      // });
+  useEffect(() => {
+    if (enabled && (isLoading || !betterDiffBlocked)) {
+      defaultDiffElement.style.display = "none";
+    } else {
+      defaultDiffElement.style.display = "unset";
+    }
+  }, [defaultDiffElement, enabled, betterDiffBlocked, isLoading]);
 
-      setDiffString(assertDefined(cleanedDiff));
-      setStatus(response.status);
-    });
-  }, [commitReferences, fileName, token]);
-
-  if (!shouldShow) {
+  if (!enabled) {
     return null;
   }
 
-  if (!diffString) {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Something went wrong</div>;
-  }
-
-  if (status === "missing-or-invalid") {
-    return <div>File format is invalid or there is no real diff</div>;
-  }
-
   return (
-    <div
-      style={{
-        borderRadius: 4,
-        padding: 4,
-      }}
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-      dangerouslySetInnerHTML={{ __html: diffString }}
-    />
+    <div>
+      {isLoading && <LoadingEmoticon />}
+
+      {diffMessages.map((message) => (
+        <div key={message.message}>{message.message}</div>
+      ))}
+
+      {!betterDiffBlocked && (
+        <div
+          style={{
+            borderRadius: 4,
+            padding: 4,
+          }}
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+          dangerouslySetInnerHTML={{ __html: assertDefined(receivedDiff?.diff) }}
+        />
+      )}
+    </div>
   );
 };

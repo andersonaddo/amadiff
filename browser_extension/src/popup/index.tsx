@@ -1,6 +1,7 @@
 import { useGithubToken } from "core/storage";
 import type React from "react";
 import { useEffect, useState } from "react";
+import "./styles.scss";
 
 const GitHubTokenManager: React.FC = () => {
   const [storedGHToken, setStoredGHToken] = useGithubToken();
@@ -21,43 +22,39 @@ const GitHubTokenManager: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-white rounded shadow-md max-w-md">
-      <h2 className="text-xl font-bold mb-4">GitHub API Token</h2>
+    <div style={{ width: 500, padding: 8 }}>
+      <h3>BetterDiff Settings</h3>
 
-      <div className="mb-4">
-        <label htmlFor="github-token" className="block mb-1 font-medium">
-          Personal Access Token
-        </label>
-        <div className="flex">
+      <div>
+        <label htmlFor="github-token">Personal Access Token</label>
+        <div style={{ display: "flex", flexDirection: "row" }}>
           <input
             id="github-token"
             type={showToken ? "text" : "password"}
             value={token}
             onChange={(e) => setToken(e.target.value)}
             placeholder="ghp_..."
-            className="w-full p-2 border rounded mr-2"
+            style={{ flex: 1 }}
           />
           <button
             onClick={toggleShowToken}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
             title={showToken ? "Hide token" : "Show token"}
             type="button"
           >
             {showToken ? "Hide" : "Show"}
           </button>
         </div>
-        <p className="text-sm text-gray-600 mt-1">Needs permissions: repo</p>
+        <p>
+          You can use a classic or new Github token - we just need a way to read your repositories.{" "}
+          <br />
+          <strong>This is only stored locally.</strong>
+          <br />
+          Don't worry - we don't steal anything. That is WAY too much work.
+        </p>
       </div>
 
-      <div className="flex space-x-2">
-        <button
-          onClick={handleSaveToken}
-          disabled={!token}
-          type="button"
-          className={`px-4 py-2 rounded ${
-            !token ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 text-white hover:bg-blue-600"
-          }`}
-        >
+      <div>
+        <button onClick={handleSaveToken} disabled={!token} type="button">
           Save Token
         </button>
       </div>
