@@ -50,9 +50,10 @@ export const DiffDisplayer = (props: {
         // });
         setReceivedDiff(response);
       })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      .catch(() => {
+        setReceivedDiff({ status: "error" });
+      })
+      .finally(() => setIsLoading(false));
   }, [commitReferences, fileName, token, colorTheme]);
 
   useEffect(() => {
@@ -72,7 +73,9 @@ export const DiffDisplayer = (props: {
       {isLoading && <LoadingEmoticon />}
 
       {diffMessages.map((message) => (
-        <div key={message.message}>{message.message}</div>
+        <div key={message.message} style={{ padding: 4 }}>
+          ⚠️ {message.message}
+        </div>
       ))}
 
       {!betterDiffBlocked && (

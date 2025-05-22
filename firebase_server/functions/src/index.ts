@@ -45,6 +45,15 @@ export const getBetterDiff = onCall(
     }
 
     if (
+      baseFileContent.status === "too-large" ||
+      headFileContent.status === "too-large"
+    ) {
+      return {
+        status: "too-large",
+      };
+    }
+
+    if (
       baseFileContent.status === "missing" &&
       headFileContent.status === "missing"
     ) {

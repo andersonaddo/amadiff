@@ -6,12 +6,21 @@ export interface DiffMessage {
   message: string;
 }
 
+const MAX_FILE_SIZE = "512kb";
+
 // Should we be doing this on the backend...?
 export const generateDiffMessages = (
   diffMethod: DiffMethod,
   diffResponse: Nullable<DiffRequestResponse>,
 ): Array<DiffMessage> => {
   const issues: Array<DiffMessage> = [];
+
+  if (diffResponse?.status === "too-large") {
+    issues.push({
+      message: `File too large (max size is ${MAX_FILE_SIZE}). Showing original instead!`,
+      magnitude: "major",
+    });
+  }
 
   if (diffResponse?.status === "error") {
     issues.push({
