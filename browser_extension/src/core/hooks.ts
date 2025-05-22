@@ -9,7 +9,7 @@ export const useBooleanState = (initialValue: boolean) => {
 
 export const useToggleState = (initialValue: boolean) => {
   const [value, setValue] = useState(initialValue);
-  const toggle = useCallback(() => setValue(!value), [value]);
+  const toggle = useCallback(() => setValue((oldValue) => !oldValue), []);
   return [value, toggle] as [boolean, () => void];
 };
 

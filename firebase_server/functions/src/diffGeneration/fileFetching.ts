@@ -6,7 +6,7 @@ const MAX_FILE_SIZE_IN_BYTES = 1028 * 512; // 512kb
 
 export interface FileFetchResult {
   textContent?: string;
-  status: "missing" | "bad-format" | "too-large" | "success";
+  status: "missing" | "bad-format" | "too-large" | "success" | "no-permissions";
 }
 
 interface FileSizeResponse {
@@ -57,8 +57,6 @@ export async function fetchTextFileContent(
               }`,
     })) as FileSizeResponse;
 
-    console.log(fileSizeResponse.data.data.repository);
-
     const fileSize = fileSizeResponse.data.data.repository.object.file.size;
     if (fileSize > MAX_FILE_SIZE_IN_BYTES) {
       return {
@@ -98,6 +96,12 @@ export async function fetchTextFileContent(
     if (error.status && error.status === 404) {
       return {
         status: "missing",
+      };
+    }
+
+    if (error.status && error.status === 401) {
+      return {
+        status: "no-permissions",
       };
     }
     throw error;

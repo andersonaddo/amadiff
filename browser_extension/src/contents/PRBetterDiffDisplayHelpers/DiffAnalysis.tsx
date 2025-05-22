@@ -22,6 +22,13 @@ export const generateDiffMessages = (
     });
   }
 
+  if (diffResponse?.status === "no-permissions") {
+    issues.push({
+      message: "Invalid permissions to fetch diff. Showing original instead!",
+      magnitude: "major",
+    });
+  }
+
   if (diffResponse?.status === "error") {
     issues.push({
       message: "Failed to get custom diff. Showing original instead!",

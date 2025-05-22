@@ -54,6 +54,15 @@ export const getBetterDiff = onCall(
     }
 
     if (
+      baseFileContent.status === "no-permissions" ||
+      headFileContent.status === "no-permissions"
+    ) {
+      return {
+        status: "no-permissions",
+      };
+    }
+
+    if (
       baseFileContent.status === "missing" &&
       headFileContent.status === "missing"
     ) {

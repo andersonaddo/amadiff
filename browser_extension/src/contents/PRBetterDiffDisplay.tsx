@@ -1,5 +1,5 @@
 import { getPRCommitReferences } from "core/api/FetchPRCommitReferences";
-import type { Optional } from "src/core/types/types";
+import type { Nullable, Optional } from "src/core/types/types";
 import type {
   PlasmoCSConfig,
   PlasmoCSUIProps,
@@ -43,6 +43,7 @@ export const getShadowHostId: PlasmoGetShadowHostId = (anchor) => {
 const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
   const [commitInfo, setCommitInfo] = useState<Optional<PRCommitInfo>>();
   const [isBetterDisplayVisible, toggleBetterDisplayVisibility] = useToggleState(true);
+  const [errorText, setErrorText] = useState<Nullable<string>>(null);
 
   const fileName = anchor?.element.getAttribute("data-file-path");
   const defaultDiffDisplayElement: Optional<HTMLTableElement> =
@@ -60,17 +61,38 @@ const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
     const getDiffReferences = async () => {
       const PRInfo = extractPRInfoFromURL();
       if (!PRInfo) return;
-      const hashes = await getPRCommitReferences(PRInfo.owner, PRInfo.repo, PRInfo.prNumber);
-      setCommitInfo(hashes);
+      try {
+        const hashes = await getPRCommitReferences(PRInfo.owner, PRInfo.repo, PRInfo.prNumber);
+        setCommitInfo(hashes);
+      } catch {
+        setErrorText(
+          "Couldn't get commit info (sure BetterDiff has the correct permissions?). Showing original diff instead.",
+        );
+        toggleBetterDisplayVisibility();
+      }
     };
     getDiffReferences();
-  }, []);
+  }, [toggleBetterDisplayVisibility]);
 
   return (
     <div>
-      <button type="button" onClick={toggleBetterDisplayVisibility}>
-        Toggle visibility!
-      </button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: 4,
+          width: "100%",
+        }}
+      >
+        <button
+          type="button"
+          onClick={toggleBetterDisplayVisibility}
+          style={{ width: "fit-content" }}
+        >
+          Toggle visibility!
+        </button>
+        {errorText && <small>⚠️ {errorText}</small>}
+      </div>
 
       {portalAnchor && defaultDiffDisplayElement && (
         <>

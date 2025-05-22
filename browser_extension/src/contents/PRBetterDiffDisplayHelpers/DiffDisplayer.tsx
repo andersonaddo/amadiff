@@ -45,6 +45,7 @@ export const DiffDisplayer = (props: {
       diffOptions: { method: diffMethod, colorMode: colorTheme ?? undefined },
     })
       .then((response) => {
+        //TODO: finish this
         // DOMPurify.sanitize(response.diff as string, {
         //   USE_PROFILES: { html: true },
         // });

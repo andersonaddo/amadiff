@@ -7,7 +7,12 @@ export interface DiffRequestArgs {
 }
 
 export interface DiffRequestResponse {
-  status: "invalid-format" | "error" | "too-large" | "success";
+  status:
+    | "invalid-format"
+    | "error"
+    | "no-permissions"
+    | "too-large"
+    | "success";
   diff?: string;
 }
 
