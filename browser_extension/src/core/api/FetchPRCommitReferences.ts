@@ -70,9 +70,13 @@ export const getPRCommitReferences = async (
 
   const data = response.data as GraphQLQueryResponse;
 
+  const headRepo =
+    data.data.repository.pullRequest.headRepository ??
+    data.data.repository.pullRequest.baseRepository;
+
   return {
-    headRepoName: data.data.repository.pullRequest.headRepository.name,
-    headRepoOwner: data.data.repository.pullRequest.headRepository.owner.login,
+    headRepoName: headRepo.name,
+    headRepoOwner: headRepo.owner.login,
     headHash: data.data.repository.pullRequest.headRefOid,
     baseRepoName: data.data.repository.pullRequest.baseRepository.name,
     baseRepoOwner: data.data.repository.pullRequest.baseRepository.owner.login,

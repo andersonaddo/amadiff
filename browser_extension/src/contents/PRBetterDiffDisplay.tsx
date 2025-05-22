@@ -64,7 +64,7 @@ const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
       try {
         const hashes = await getPRCommitReferences(PRInfo.owner, PRInfo.repo, PRInfo.prNumber);
         setCommitInfo(hashes);
-      } catch {
+      } catch (e) {
         setErrorText(
           "Couldn't get commit info (sure BetterDiff has the correct permissions?). Showing original diff instead.",
         );

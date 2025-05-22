@@ -11,6 +11,7 @@ import { assertDefined } from "src/core/util";
 import { generateDiffMessages } from "./DiffAnalysis";
 import { useGithubColorTheme } from "./GHUtils";
 import LoadingEmoticon from "./LoadingAnimation";
+import DOMPurify from "dompurify";
 
 const diffMethod = DiffMethod.DIFFTASTIC;
 
@@ -45,11 +46,10 @@ export const DiffDisplayer = (props: {
       diffOptions: { method: diffMethod, colorMode: colorTheme ?? undefined },
     })
       .then((response) => {
-        //TODO: finish this
-        // DOMPurify.sanitize(response.diff as string, {
-        //   USE_PROFILES: { html: true },
-        // });
-        setReceivedDiff(response);
+        const cleanedResponse = DOMPurify.sanitize(response.diff as string, {
+          USE_PROFILES: { html: true },
+        });
+        setReceivedDiff({ ...response, diff: cleanedResponse });
       })
       .catch(() => {
         setReceivedDiff({ status: "error" });
