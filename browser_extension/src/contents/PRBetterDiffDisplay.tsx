@@ -14,7 +14,6 @@ import { useToggleState } from "src/core/hooks";
 import { DiffDisplayer } from "./PRBetterDiffDisplayHelpers/DiffDisplayer";
 import type { PRCommitInfo } from "src/core/types/getBetterDiffTypes";
 import styleText from "data-text:./styles.scss"; // https://docs.plasmo.com/framework/content-scripts-ui/styling
-import { isInDevMode } from "src/core/util";
 
 export const getStyle: PlasmoGetStyle = () => {
   const style = document.createElement("style");
@@ -80,45 +79,57 @@ const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           gap: 4,
           width: "100%",
+          marginBottom: 8,
         }}
       >
-        <button
-          type="button"
-          onClick={toggleBetterDisplayVisibility}
-          style={{ width: "fit-content" }}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            width: "100%",
+          }}
         >
-          Toggle visibility!
-        </button>
+          <button
+            type="button"
+            onClick={toggleBetterDisplayVisibility}
+            style={{
+              width: "fit-content",
+            }}
+          >
+            Toggle visibility!
+          </button>
+          {commitInfo && (
+            <div>
+              <p style={{ fontSize: 10, margin: 0 }}>
+                Merge Base:{" "}
+                <a
+                  href={`https://github.com/${commitInfo.baseRepoOwner}/${commitInfo.baseRepoName}/blob/${commitInfo.baseHash}/${fileName}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  https://github.com/{commitInfo.baseRepoOwner}/{commitInfo.baseRepoName}/blob/
+                  {commitInfo.baseHash}/{fileName}
+                </a>
+                <br />
+                HEAD:{" "}
+                <a
+                  href={`https://github.com/${commitInfo.headRepoOwner}/${commitInfo.headRepoName}/blob/${commitInfo.headHash}/${fileName}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  https://github.com/{commitInfo.headRepoOwner}/{commitInfo.headRepoName}/blob/
+                  {commitInfo.headHash}/{fileName}
+                </a>
+              </p>
+            </div>
+          )}
+        </div>
         {errorText && <small>⚠️ {errorText}</small>}
-        {commitInfo && isInDevMode() && (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <small>
-              (Dev only) Base:{" "}
-              <a
-                href={`https://github.com/${commitInfo.baseRepoOwner}/${commitInfo.baseRepoName}/blob/${commitInfo.baseHash}/${fileName}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                https://github.com/{commitInfo.baseRepoOwner}/{commitInfo.baseRepoName}/blob/
-                {commitInfo.baseHash}/{fileName}
-              </a>
-            </small>
-            <small>
-              (Dev only) HEAD:{" "}
-              <a
-                href={`https://github.com/${commitInfo.headRepoOwner}/${commitInfo.headRepoName}/blob/${commitInfo.headHash}/${fileName}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                https://github.com/{commitInfo.headRepoOwner}/{commitInfo.headRepoName}/blob/
-                {commitInfo.headHash}/{fileName}
-              </a>
-            </small>
-          </div>
-        )}
       </div>
 
       {portalAnchor && defaultDiffDisplayElement && (

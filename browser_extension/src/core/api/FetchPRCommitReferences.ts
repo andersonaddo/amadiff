@@ -13,16 +13,18 @@ interface GraphQLQueryResponse {
   data: {
     repository: {
       pullRequest: {
-        headRefOid: string;
-        baseRefOid: string;
-        headRepository: GraphQLRepo;
         baseRepository: GraphQLRepo;
+        baseRef: { name: string };
+
+        headRepository: GraphQLRepo;
+        headRef: { name: string };
+        headRefOid: string;
       };
     };
   };
 }
 
-const makeGraphQLQuery = (owner: string, repo: string, prNumber: number) => `{
+const makeGraphQLQueryForBasicData = (owner: string, repo: string, prNumber: number) => `{
   repository(owner: "${owner}", name: "${repo}") {
     pullRequest(number: ${prNumber}) {
       baseRepository {
@@ -31,12 +33,18 @@ const makeGraphQLQuery = (owner: string, repo: string, prNumber: number) => `{
           login
         }
       }
-      baseRefOid
+      baseRef {
+        name
+      }
+      
       headRepository {
         name 
         owner {
           login
         }
+      }
+      headRef {
+        name  
       }
       headRefOid
     }
@@ -44,8 +52,12 @@ const makeGraphQLQuery = (owner: string, repo: string, prNumber: number) => `{
 }`;
 
 // TODO: Implement caching here (the cache should just store promises with ttl)
-const axiosInstance = axios.create({
+const graphQLAxiosInstance = axios.create({
   baseURL: "https://api.github.com/graphql",
+});
+
+const restAxiosInstance = axios.create({
+  baseURL: "https://api.github.com/repos/",
 });
 
 export const getPRCommitReferences = async (
@@ -55,10 +67,10 @@ export const getPRCommitReferences = async (
 ): Promise<PRCommitInfo> => {
   const key = await getGithubToken();
 
-  const response = await axiosInstance.post(
+  const basicInfoResponse = await graphQLAxiosInstance.post(
     "",
     {
-      query: makeGraphQLQuery(owner, repo, prNumber),
+      query: makeGraphQLQueryForBasicData(owner, repo, prNumber),
     },
     {
       headers: {
@@ -68,16 +80,29 @@ export const getPRCommitReferences = async (
     },
   );
 
-  const data = response.data as GraphQLQueryResponse;
+  const data = basicInfoResponse.data as GraphQLQueryResponse;
 
-  const headRepo =
-    data.data.repository.pullRequest.headRepository ??
-    data.data.repository.pullRequest.baseRepository;
+  const baseRepo = data.data.repository.pullRequest.baseRepository;
+  const headRepo = data.data.repository.pullRequest.headRepository ?? baseRepo;
+
+  // I would have though I could just compare baseRefOid and headRefOid, but that's not accurate sometimes 🤔
+  // There's a separate concept called a merge_base_commit which is the actual base reference point. Sometimes its equal to baseRefOid, but sometimes its not
+  const compareInfoResponse = await restAxiosInstance.get(
+    `${baseRepo.owner.login}/${baseRepo.name}/compare/${baseRepo.owner.login}:${data.data.repository.pullRequest.baseRef.name}...${headRepo.owner.login}:${data.data.repository.pullRequest.headRef.name}`,
+    {
+      headers: {
+        Authorization: `bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const mergeBaseCommit = compareInfoResponse.data.merge_base_commit.sha;
 
   return {
-    baseRepoName: data.data.repository.pullRequest.baseRepository.name,
-    baseRepoOwner: data.data.repository.pullRequest.baseRepository.owner.login,
-    baseHash: data.data.repository.pullRequest.baseRefOid,
+    baseRepoName: baseRepo.name,
+    baseRepoOwner: baseRepo.owner.login,
+    baseHash: mergeBaseCommit,
     headRepoName: headRepo.name,
     headRepoOwner: headRepo.owner.login,
     headHash: data.data.repository.pullRequest.headRefOid,
