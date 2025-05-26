@@ -13,6 +13,8 @@ import { useGithubColorTheme } from "./GHUtils";
 import LoadingEmoticon from "./LoadingAnimation";
 import DOMPurify from "dompurify";
 
+import "./terminal-to-html-styling.css";
+
 const diffMethod = DiffMethod.DIFFTASTIC;
 
 export const DiffDisplayer = (props: {
@@ -33,7 +35,7 @@ export const DiffDisplayer = (props: {
   }, [receivedDiff]);
 
   const betterDiffBlocked = useMemo(() => {
-    return isLoading || diffMessages.some((x) => x.magnitude === "major") || !receivedDiff?.diff;
+    return isLoading || !receivedDiff?.diff || diffMessages.some((x) => x.magnitude === "major");
   }, [diffMessages, isLoading, receivedDiff]);
 
   useEffect(() => {
@@ -46,6 +48,8 @@ export const DiffDisplayer = (props: {
       diffOptions: { method: diffMethod, colorMode: colorTheme ?? undefined },
     })
       .then((response) => {
+        // We don't want any XSS here!
+        // See notes in functions/src/diffGeneration/diffHtmlGeneration.ts to know more about my thoughts about this.
         const cleanedResponse = DOMPurify.sanitize(response.diff as string, {
           USE_PROFILES: { html: true },
         });
@@ -85,7 +89,8 @@ export const DiffDisplayer = (props: {
             borderRadius: 4,
             padding: 4,
           }}
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+          className="term-container" // See the notes in the css stylesheet to understand why we're doing this
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: this is the whole point of the app lol
           dangerouslySetInnerHTML={{ __html: assertDefined(receivedDiff?.diff) }}
         />
       )}

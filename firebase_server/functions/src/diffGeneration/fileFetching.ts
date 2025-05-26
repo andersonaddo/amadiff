@@ -14,7 +14,7 @@ interface FileSizeResponse {
     data: {
       repository: {
         object: {
-          file: {
+          file?: {
             size: number;
           };
         };
@@ -57,7 +57,14 @@ export async function fetchTextFileContent(
               }`,
     })) as FileSizeResponse;
 
-    const fileSize = fileSizeResponse.data.data.repository.object.file.size;
+    const fileInfo = fileSizeResponse.data.data.repository.object.file;
+    if (!fileInfo) {
+      return {
+        status: "missing",
+      };
+    }
+
+    const fileSize = fileInfo.size;
     if (fileSize > MAX_FILE_SIZE_IN_BYTES) {
       return {
         status: "too-large",

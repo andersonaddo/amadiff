@@ -75,11 +75,11 @@ export const getPRCommitReferences = async (
     data.data.repository.pullRequest.baseRepository;
 
   return {
-    headRepoName: headRepo.name,
-    headRepoOwner: headRepo.owner.login,
-    headHash: data.data.repository.pullRequest.headRefOid,
     baseRepoName: data.data.repository.pullRequest.baseRepository.name,
     baseRepoOwner: data.data.repository.pullRequest.baseRepository.owner.login,
     baseHash: data.data.repository.pullRequest.baseRefOid,
+    headRepoName: headRepo.name,
+    headRepoOwner: headRepo.owner.login,
+    headHash: data.data.repository.pullRequest.headRefOid,
   };
 };
