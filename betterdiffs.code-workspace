@@ -12,6 +12,10 @@
             "name": "extension",
             "path": "browser_extension"
         },
+        {
+            "name": "gh-pages",
+            "path": "gh_pages"
+        },
     ],
     "extensions": {
         "recommendations": [
