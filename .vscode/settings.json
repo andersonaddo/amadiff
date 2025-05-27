@@ -2,6 +2,6 @@
   "files.exclude": {
     "firebase_server/": true,
     "browser_extension/": true,
-    "gh_pages/": true
+    "docs/": true
   }
 }

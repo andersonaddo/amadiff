@@ -14,7 +14,7 @@
         },
         {
             "name": "gh-pages",
-            "path": "gh_pages"
+            "path": "docs"
         },
     ],
     "extensions": {
