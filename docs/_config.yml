@@ -1,4 +1,4 @@
-
+# This is for Github Pages
 title: BetterDiffs
 description: Experience better commit diffs directly in Github!
 remote_theme: jekyll/minima@1e8a445 # https://github.com/jekyll/minima
@@ -6,3 +6,4 @@ plugins:
   - jekyll-remote-theme
 minima:
   skin: solarized-light
+  hide_site_feed_link: true
