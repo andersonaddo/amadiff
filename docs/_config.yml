@@ -5,4 +5,4 @@ remote_theme: jekyll/minima@1e8a445 # https://github.com/jekyll/minima
 plugins:
   - jekyll-remote-theme
 minima:
-  skin: solarized-dark
+  skin: solarized-light
