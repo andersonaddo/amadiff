@@ -1,9 +1,38 @@
-# This is for Github Pages
-title: BetterDiffs
-description: Experience better commit diffs directly in Github!
-remote_theme: jekyll/minima@1e8a445 # https://github.com/jekyll/minima
+remote_theme: daviddarnes/alembic@main # https://github.com/daviddarnes/alembic/
 plugins:
   - jekyll-remote-theme
-minima:
-  skin: solarized-light
-  hide_site_feed_link: true
+  - jekyll-seo-tag
+
+
+title: BetterDiffs
+description: Experience better commit diffs directly in Github!
+
+encoding: utf-8
+lang: en-GB
+logo: "/assets/icon.png"
+url: "https://andersonaddo.github.io/betterdiffs/"
+repo: "https://github.com/andersonaddo/betterdiffs"
+
+exclude:
+- README.md
+- CODE_OF_CONDUCT.md
+- CONTRIBUTING.md
+- screenshot.png
+- LICENSE
+- CNAME
+- Gemfile
+- Gemfile.lock
+- alembic-jekyll-theme.gemspec
+- .jekyll-cache
+
+navigation_header:
+- title: Home
+  url: /
+- title: Privacy Policy
+  url: /privacy-policy/
+- title: Github
+  url: https://github.com/andersonaddo/betterdiffs
+
+navigation_footer:
+- title: Created by Anderson Addo
+  url: https://loadingdeveloper.com
