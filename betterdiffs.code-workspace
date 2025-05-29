@@ -13,10 +13,6 @@
             "path": "browser_extension"
         },
         {
-            "name": "gh-pages",
-            "path": "docs"
-        },
-        {
             "name": "website",
             "path": "website"
         },
