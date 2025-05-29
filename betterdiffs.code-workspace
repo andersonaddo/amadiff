@@ -16,6 +16,10 @@
             "name": "gh-pages",
             "path": "docs"
         },
+        {
+            "name": "website",
+            "path": "website"
+        },
     ],
     "extensions": {
         "recommendations": [
