@@ -1,0 +1,8 @@
+/* https://blowfish.page/docs/advanced-customisation/#using-additional-fonts */
+html {
+    font-size: 1.4em;
+
+    body {
+        font-family: "Jersey 20", sans-serif;
+    }
+}

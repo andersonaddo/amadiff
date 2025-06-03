@@ -1,5 +1,12 @@
 This is a Hugo website.
 
+This is the theme it's using: https://blowfish.page/ 
+
+Scripts to run:
+
+To test the site locally:
+
+`hugo server --buildDrafts --disableFastRender`
 
 ------
 

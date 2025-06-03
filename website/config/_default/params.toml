@@ -1,0 +1,44 @@
+# -- Theme Options --
+# These options control how the theme functions and allow you to
+# customise the display of your website.
+#
+# Refer to the theme docs for more details about each of these parameters.
+# https://blowfish.page/docs/configuration/#theme-parameters
+
+colorScheme = "forest"
+defaultAppearance = "dark"
+autoSwitchAppearance = true
+
+enableSearch = false
+enableCodeCopy = true
+
+replyByEmail = false
+
+disableImageOptimization = false
+disableTextInHeader = false
+# backgroundImageWidth = 1200
+
+[header]
+  layout = "basic"
+
+[footer]
+  showMenu = false
+  showCopyright = false
+  showThemeAttribution = true
+  showAppearanceSwitcher = true
+  showScrollToTop = true
+
+[homepage]
+  layout = "background"
+  homepageImage = "magical-forest-background.jpg"
+  layoutBackgroundBlur = true
+
+[article]
+  showDate = true
+  showAuthor = true
+  showDraftLabel = true
+  showReadingTime = true  
+  showWordCount = true
+
+[sitemap]
+  excludedKinds = ["taxonomy", "term"]

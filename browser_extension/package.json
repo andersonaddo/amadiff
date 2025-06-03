@@ -1,6 +1,6 @@
 {
-  "name": "betterdiffs",
-  "displayName": "BetterDiffs",
+  "name": "amadiff",
+  "displayName": "Amadiff",
   "author": "Andy",
   "version": "1.0.0",
   "scripts": {
