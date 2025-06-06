@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getGithubToken } from "core/storage";
-import type { PRCommitInfo } from "../types/getBetterDiffTypes";
+import type { PRChangeInfo } from "../types/getBetterDiffTypes";
 
 interface GraphQLRepo {
   name: string;
@@ -23,6 +23,23 @@ interface GraphQLQueryResponse {
     };
   };
 }
+
+interface CompareResponse {
+  merge_base_commit: {
+    sha: string;
+  };
+  files: Array<{
+    filename: string;
+  }>;
+}
+
+const getFileExtension = (filename: string): string => {
+  const lastDotIndex = filename.lastIndexOf(".");
+  if (lastDotIndex === -1 || lastDotIndex === filename.length - 1) {
+    return "no extension";
+  }
+  return filename.substring(lastDotIndex + 1).toLowerCase();
+};
 
 const makeGraphQLQueryForBasicData = (owner: string, repo: string, prNumber: number) => `{
   repository(owner: "${owner}", name: "${repo}") {
@@ -60,11 +77,11 @@ const restAxiosInstance = axios.create({
   baseURL: "https://api.github.com/repos/",
 });
 
-export const getPRCommitReferences = async (
+export const getPRChangeInformation = async (
   owner: string,
   repo: string,
   prNumber: number,
-): Promise<PRCommitInfo> => {
+): Promise<PRChangeInfo> => {
   const key = await getGithubToken();
 
   const basicInfoResponse = await graphQLAxiosInstance.post(
@@ -96,8 +113,21 @@ export const getPRCommitReferences = async (
       },
     },
   );
+  const compareInfo = compareInfoResponse.data as CompareResponse;
 
-  const mergeBaseCommit = compareInfoResponse.data.merge_base_commit.sha;
+  const mergeBaseCommit = compareInfo.merge_base_commit.sha;
+  const fileExtensions = compareInfo.files
+    .map((x) => getFileExtension(x.filename))
+    .reduce(
+      (acc, val) => {
+        if (!acc[val]) {
+          acc[val] = 0;
+        }
+        acc[val]++;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
   return {
     baseRepoName: baseRepo.name,
@@ -106,5 +136,12 @@ export const getPRCommitReferences = async (
     headRepoName: headRepo.name,
     headRepoOwner: headRepo.owner.login,
     headHash: data.data.repository.pullRequest.headRefOid,
+
+    //TODO: ideally, these 2 should be fetched and returned by a separate function.
+    // These are only used for analytics, so they shouldn't need to be returned from this function, which
+    // is a core function of Amadiff (and this data also gets sent to the banckend).
+    // But, Alas, I'm lazy right now.
+    filesChanged: compareInfo.files.length,
+    fileCountByExtensions: fileExtensions,
   };
 };

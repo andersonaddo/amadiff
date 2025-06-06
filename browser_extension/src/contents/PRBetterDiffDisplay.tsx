@@ -1,4 +1,4 @@
-import { getPRCommitReferences } from "core/api/FetchPRCommitReferences";
+import { getPRChangeInformation } from "src/core/api/FetchPRChangeInformation";
 import type { Nullable, Optional } from "src/core/types/types";
 import type {
   PlasmoCSConfig,
@@ -9,21 +9,20 @@ import type {
 } from "plasmo";
 import { useEffect, useMemo, useState, type FC } from "react";
 import { createPortal } from "react-dom";
-import { extractPRInfoFromURL } from "src/contents/PRBetterDiffDisplayHelpers/GHUtils";
+import { extractPRInfoFromURL } from "src/core/github";
 import { useToggleState } from "src/core/hooks";
 import { DiffDisplayer } from "./PRBetterDiffDisplayHelpers/DiffDisplayer";
-import type { PRCommitInfo } from "src/core/types/getBetterDiffTypes";
-import styleText from "data-text:./styles.scss"; // https://docs.plasmo.com/framework/content-scripts-ui/styling
+import type { PRChangeInfo } from "src/core/types/getBetterDiffTypes";
+import styleText from "data-text:./PRBetterDiffDisplayHelpers/styles.scss"; // https://docs.plasmo.com/framework/content-scripts-ui/styling
+import { recordEvent, setUpAnalytics } from "src/core/analytics";
 
-export const getStyle: PlasmoGetStyle = () => {
-  const style = document.createElement("style");
-  style.textContent = styleText;
-  return style;
-};
+setUpAnalytics();
 
-// Context on what's going on here:
+// Plasmo configuration
+// https://docs.plasmo.com/framework/content-scripts-ui/styling
 // https://docs.plasmo.com/framework/content-scripts-ui/life-cycle
-
+// (--start-- and --end-- are added just to make the code more readable)
+// ------------ start ------------
 export const config: PlasmoCSConfig = {
   matches: ["https://*.github.com/*"],
 };
@@ -40,8 +39,16 @@ export const getShadowHostId: PlasmoGetShadowHostId = (anchor) => {
   return `${anchor?.element.getAttribute("data-file-path")}-plasmo-shadow-host-id`;
 };
 
+export const getStyle: PlasmoGetStyle = () => {
+  const style = document.createElement("style");
+  style.textContent = styleText;
+  return style;
+};
+
+// ------------ end ------------
+
 const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
-  const [commitInfo, setCommitInfo] = useState<Optional<PRCommitInfo>>();
+  const [commitInfo, setCommitInfo] = useState<Optional<PRChangeInfo>>();
   const [isBetterDisplayVisible, toggleBetterDisplayVisibility] = useToggleState(true);
   const [errorText, setErrorText] = useState<Nullable<string>>(null);
 
@@ -62,7 +69,7 @@ const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
       const PRInfo = extractPRInfoFromURL();
       if (!PRInfo) return;
       try {
-        const hashes = await getPRCommitReferences(PRInfo.owner, PRInfo.repo, PRInfo.prNumber);
+        const hashes = await getPRChangeInformation(PRInfo.owner, PRInfo.repo, PRInfo.prNumber);
         setCommitInfo(hashes);
       } catch (e) {
         setErrorText(
@@ -96,7 +103,10 @@ const PRBetterDiffDisplay: FC<PlasmoCSUIProps> = ({ anchor }) => {
         >
           <button
             type="button"
-            onClick={toggleBetterDisplayVisibility}
+            onClick={() => {
+              recordEvent("toggle_diff_visibility", { newValue: !isBetterDisplayVisible });
+              toggleBetterDisplayVisibility();
+            }}
             style={{
               width: "fit-content",
             }}

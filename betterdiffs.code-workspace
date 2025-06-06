@@ -32,8 +32,10 @@
     },
     "settings": {
         "cSpell.words": [
+            "autocapture",
             "difftastic",
-            "Displayer"
+            "Displayer",
+            "posthog"
         ],
         "git.openRepositoryInParentFolders": "always",
     }

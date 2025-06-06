@@ -1,7 +1,7 @@
 // These should all match the backend
 export interface DiffRequestArgs {
   token: string;
-  commitInfo: PRCommitInfo;
+  commitInfo: PRChangeInfo;
   fileName: string;
   diffOptions: DiffOptions;
 }
@@ -20,11 +20,13 @@ export enum DiffMethod {
   DIFFTASTIC = "difftastic",
 }
 
-export interface PRCommitInfo {
+export interface PRChangeInfo {
   headRepoName: string;
   headRepoOwner: string;
   headHash: string;
   baseRepoName: string;
   baseRepoOwner: string;
   baseHash: string;
+  filesChanged: number;
+  fileCountByExtensions: Record<string, number>;
 }

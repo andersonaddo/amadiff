@@ -23,6 +23,7 @@
     "dompurify": "^3.2.5",
     "firebase": "^11.6.1",
     "plasmo": "0.89.4",
+    "posthog-js": "^1.249.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

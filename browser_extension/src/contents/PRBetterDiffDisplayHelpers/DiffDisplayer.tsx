@@ -4,12 +4,12 @@ import { useGithubToken } from "src/core/storage";
 import {
   DiffMethod,
   type DiffRequestResponse,
-  type PRCommitInfo,
+  type PRChangeInfo,
 } from "src/core/types/getBetterDiffTypes";
 import type { Nullable } from "src/core/types/types";
 import { assertDefined } from "src/core/util";
 import { generateDiffMessages } from "./DiffAnalysis";
-import { useGithubColorTheme } from "./GHUtils";
+import { useGithubColorTheme } from "src/core/github";
 import LoadingEmoticon from "./LoadingAnimation";
 import DOMPurify from "dompurify";
 
@@ -18,7 +18,7 @@ import "./terminal-to-html-styling.css";
 const diffMethod = DiffMethod.DIFFTASTIC;
 
 export const DiffDisplayer = (props: {
-  commitReferences?: Nullable<PRCommitInfo>;
+  commitReferences?: Nullable<PRChangeInfo>;
   fileName?: Nullable<string>;
   enabled: boolean;
   defaultDiffElement: HTMLTableElement;

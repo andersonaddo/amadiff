@@ -23,10 +23,10 @@ const GitHubTokenManager: React.FC = () => {
 
   return (
     <div style={{ width: 500, padding: 8 }}>
-      <h3>BetterDiff Settings</h3>
+      <h3>Amadiff Settings</h3>
 
       <div>
-        <label htmlFor="github-token">Personal Access Token</label>
+        <label htmlFor="github-token">Github Personal Access Token</label>
         <div style={{ display: "flex", flexDirection: "row" }}>
           <input
             id="github-token"
@@ -45,11 +45,34 @@ const GitHubTokenManager: React.FC = () => {
           </button>
         </div>
         <p>
-          You can use a classic or new Github token - we just need a way to read your repositories.{" "}
-          <br />
+          You can use a{" "}
+          <a
+            href="https://github.com/settings/tokens/new?scopes=repo&description=Amadiff%20Token"
+            target="_blank"
+            rel="noreferrer"
+          >
+            classic
+          </a>{" "}
+          or{" "}
+          <a
+            href="https://github.com/settings/personal-access-tokens/new"
+            target="_blank"
+            rel="noreferrer"
+          >
+            fine-tined
+          </a>{" "}
+          Github token - we just need a way to read your repositories. <br />
           <strong>This is only stored locally.</strong>
           <br />
-          Don't worry - we don't steal anything. That is WAY too much work.
+          Don't worry - we don't store any of your Github information or anything. Amadiff is{" "}
+          <a href={process.env.PLASMO_PUBLIC_GITHUB_LINK} target="_blank" rel="noreferrer">
+            open source
+          </a>
+          , and you can also see our{" "}
+          <a href={process.env.PLASMO_PUBLIC_PRIVACY_POLICY_LINK} target="_blank" rel="noreferrer">
+            privacy policy
+          </a>{" "}
+          here.
         </p>
       </div>
 
