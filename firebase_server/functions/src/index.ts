@@ -15,6 +15,7 @@ const cleanFilePath = (path: string) => {
 };
 
 export const getBetterDiff = onCall(
+  { memory: "1GiB" },
   async (args): Promise<DiffRequestResponse> => {
     const request = args.data as DiffRequestArgs;
 

@@ -59,7 +59,7 @@ const GitHubTokenManager: React.FC = () => {
             target="_blank"
             rel="noreferrer"
           >
-            fine-tined
+            fine-tuned
           </a>{" "}
           Github token - we just need a way to read your repositories. <br />
           <strong>This is only stored locally.</strong>
