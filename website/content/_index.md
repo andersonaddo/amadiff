@@ -17,6 +17,9 @@ Get it on Firefox
 </div>
 
 <img src="screenshots/Xnapper-2025-06-02-23.28.43.png"/>
+<img src="screenshots/Xnapper-2025-06-05-21.56.37.png"/>
+<img src="screenshots/Xnapper-2025-06-05-21.57.33.png"/>
+<img src="screenshots/Xnapper-2025-06-05-21.58.36.png"/>
 
 Supported tools so far: [Difftastic](https://difftastic.wilfred.me.uk/)
 
