@@ -2,7 +2,7 @@
 title: Amadiff
 ---
 
-Amadiff is an open source browser extension that displays Github diffs using different diff tools.
+Amadiff is an open source browser extension that displays Github diffs using different diff tools. There are a lot of tools out there that can customize what git diffs look like, but all of them are constrained to the terminal as CLI tools. Amadiff brings those tools to the Github interface.
 
 
 
