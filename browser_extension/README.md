@@ -8,12 +8,12 @@ To setup:
 
 To run locally:
 
-`yarn run start`
+`yarn run start_chrome` or `yarn run start_firefox`
 
 To make a production build (unpackaged):
 
-`yarn run build`
+`yarn run build_chrome` or `yarn run build_firefox`
 
 To make a production build (packaged):
 
-`yarn run deploy`
+`yarn run deploy_chrome` or `yarn run deploy_firefox`

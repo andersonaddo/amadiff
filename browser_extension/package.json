@@ -6,7 +6,10 @@
   "scripts": {
     "start": "sh ./scripts/dev_chrome.sh",
     "build": "sh ./scripts/build_chrome.sh",
-    "deploy": "sh ./scripts/zip_chrome.sh"
+    "deploy": "sh ./scripts/zip_chrome.sh",
+    "start_firefox": "sh ./scripts/dev_firefox.sh",
+    "build_firefox": "sh ./scripts/build_firefox.sh",
+    "deploy_firefox": "sh ./scripts/zip_firefox.sh"
   },
   "manifest": {
     "permissions": [
@@ -14,7 +17,12 @@
     ],
     "host_permissions": [
       "https://*.github.com/*"
-    ]
+    ],
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "anderson@amadiff.com"
+      }
+    }
   },
   "dependencies": {
     "@picocss/pico": "^2.1.1",

@@ -1,5 +1,5 @@
-echo "🎨 Building Plasmo extension for Chrome"
+echo "🦊 Building Plasmo extension for firefox"
 echo "⚠️ Note that this is NOT zipped"
 
 # https://docs.plasmo.com/framework/workflows/build
-plasmo build --target=chrome-mv3
+plasmo build --target=firefox-mv3
