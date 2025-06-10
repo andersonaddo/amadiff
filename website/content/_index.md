@@ -11,9 +11,9 @@ Amadiff is an open source browser extension that displays Github diffs using dif
 Get it on Chrome
 {{< /button >}}
 
-<!-- {{< button href="#firefox" target="_self" >}}
+{{< button href="https://addons.mozilla.org/en-US/firefox/addon/amadiff/" target="_self" >}}
 Get it on Firefox
-{{< /button >}} -->
+{{< /button >}}
 </div>
 
 <img src="screenshots/Xnapper-2025-06-02-23.28.43.png"/>
