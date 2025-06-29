@@ -54,7 +54,7 @@ const getDiffCommand = (
     ? "./binaries/difft-darwin"
     : "./binaries/difft-linux";
   const background = options.colorMode === "light" ? "light" : "dark";
-  return `${binaryPath} --color always --background ${background} --width 150 ${baseFilePath} ${headFilePath}`;
+  return `${binaryPath} --color always --background ${background} --width 150 "${baseFilePath}" "${headFilePath}"`;
 };
 
 const getAnsiToHtmlCommand = () => {
